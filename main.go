@@ -3,14 +3,20 @@ package main
 import (
 	"booking-app/helper"
 	"fmt"
-	"strconv"
 )
+
+type UserData struct {
+	firstName   string
+	lastName    string
+	email       string
+	nbOfTickets uint
+}
 
 const conferenceName = "Go Conference 2024"
 const conferenceTickets = 500
 
 var remainingTickets uint = conferenceTickets
-var bookings = make([]map[string]string, 0)
+var bookings = make([]UserData, 0)
 
 func main() {
 	greetUsers()
@@ -43,11 +49,12 @@ func main() {
 }
 
 func bookTickets(userTickets uint, userFirstName string, userLastName string, userEmail string) {
-	var userData = make(map[string]string)
-	userData["firstName"] = userFirstName
-	userData["lastName"] = userLastName
-	userData["email"] = userEmail
-	userData["nbOfTickets"] = strconv.FormatUint(uint64(userTickets), 10)
+	userData := UserData{
+		firstName:   userFirstName,
+		lastName:    userLastName,
+		email:       userEmail,
+		nbOfTickets: userTickets,
+	}
 
 	remainingTickets -= userTickets
 	bookings = append(bookings, userData)
@@ -89,7 +96,7 @@ func displayCurrentBookings() {
 	fmt.Println("Current bookings:")
 	fmt.Println("-----------------")
 	for _, booking := range bookings {
-		fmt.Printf("%s %s (%s) - %s tickets\n", booking["firstName"], booking["lastName"], booking["email"], booking["nbOfTickets"])
+		fmt.Printf("%s %s (%s) - %d tickets\n", booking.firstName, booking.lastName, booking.email, booking.nbOfTickets)
 	}
 	fmt.Println("-----------------")
 	fmt.Print("\n\n")

@@ -1,9 +1,9 @@
 package main
 
 import (
+	"booking-app/helper"
 	"fmt"
 	"strconv"
-	"strings"
 )
 
 const conferenceName = "Go Conference 2024"
@@ -22,7 +22,7 @@ func main() {
 		}
 
 		userFirstName, userLastName, userEmail, userTickets := getUserInput()
-		if !validateUserInput(userFirstName, userLastName, userEmail, userTickets) {
+		if !helper.ValidateUserInput(userFirstName, userLastName, userEmail, userTickets) {
 			fmt.Println("Sorry, you have entered invalid details")
 			fmt.Println("Please try again")
 			continue
@@ -66,10 +66,6 @@ func getUserInput() (string, string, string, uint) {
 	fmt.Print("How many tickets would you like to purchase? ")
 	fmt.Scanln(&userTickets)
 	return userFirstName, userLastName, userEmail, userTickets
-}
-
-func validateUserInput(userFirstName string, userLastName string, userEmail string, userTickets uint) bool {
-	return len(userFirstName) > 0 && len(userLastName) > 0 && strings.Contains(userEmail, "@") && userTickets > 0
 }
 
 func confirmUserPurchase(userFirstName string, userTickets uint, userEmail string, remainingTickets uint, conferenceName string) {

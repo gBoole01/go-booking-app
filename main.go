@@ -10,7 +10,7 @@ const conferenceName = "Go Conference 2024"
 const conferenceTickets = 500
 
 var remainingTickets uint = conferenceTickets
-var bookings []string
+var bookings = make([]map[string]string, 0)
 
 func main() {
 	greetUsers()
@@ -35,13 +35,23 @@ func main() {
 		}
 
 		if userTickets <= remainingTickets {
-			remainingTickets -= userTickets
-			bookings = append(bookings, userFirstName+" "+userLastName+" - "+userEmail+" ("+strconv.Itoa(int(userTickets))+" tickets)")
-			confirmUserPurchase(userFirstName, userTickets, userEmail, remainingTickets, conferenceName)
+			bookTickets(userTickets, userFirstName, userLastName, userEmail)
 		}
 
 		displayCurrentBookings()
 	}
+}
+
+func bookTickets(userTickets uint, userFirstName string, userLastName string, userEmail string) {
+	var userData = make(map[string]string)
+	userData["firstName"] = userFirstName
+	userData["lastName"] = userLastName
+	userData["email"] = userEmail
+	userData["nbOfTickets"] = strconv.FormatUint(uint64(userTickets), 10)
+
+	remainingTickets -= userTickets
+	bookings = append(bookings, userData)
+	confirmUserPurchase(userFirstName, userTickets, userEmail, remainingTickets, conferenceName)
 }
 
 func greetUsers() {
@@ -79,9 +89,7 @@ func displayCurrentBookings() {
 	fmt.Println("Current bookings:")
 	fmt.Println("-----------------")
 	for _, booking := range bookings {
-		if booking != "" {
-			fmt.Println(booking)
-		}
+		fmt.Printf("%s %s (%s) - %s tickets\n", booking["firstName"], booking["lastName"], booking["email"], booking["nbOfTickets"])
 	}
 	fmt.Println("-----------------")
 	fmt.Print("\n\n")

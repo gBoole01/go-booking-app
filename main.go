@@ -6,18 +6,23 @@ import (
 	"strings"
 )
 
-func main() {
-	const conferenceName = "Go Conference 2024"
-	const conferenceTickets = 500
-	var remainingTickets uint = conferenceTickets
-	var bookings []string
+const conferenceName = "Go Conference 2024"
+const conferenceTickets = 500
 
-	greetUsers(conferenceName, remainingTickets, conferenceTickets)
+var remainingTickets uint = conferenceTickets
+var bookings []string
+
+func main() {
+	greetUsers()
 
 	for {
+		if remainingTickets == 0 {
+			fmt.Println("Sorry, we have sold out of tickets")
+			break
+		}
+
 		userFirstName, userLastName, userEmail, userTickets := getUserInput()
-		isValid := validateUserInput(userFirstName, userLastName, userEmail, userTickets)
-		if !isValid {
+		if !validateUserInput(userFirstName, userLastName, userEmail, userTickets) {
 			fmt.Println("Sorry, you have entered invalid details")
 			fmt.Println("Please try again")
 			continue
@@ -35,16 +40,11 @@ func main() {
 			confirmUserPurchase(userFirstName, userTickets, userEmail, remainingTickets, conferenceName)
 		}
 
-		displayCurrentBookings(bookings)
-
-		if remainingTickets == 0 {
-			fmt.Println("Sorry, we have sold out of tickets")
-			break
-		}
+		displayCurrentBookings()
 	}
 }
 
-func greetUsers(conferenceName string, remainingTickets uint, conferenceTickets int) {
+func greetUsers() {
 	fmt.Printf("Welcome to our %v booking application\n", conferenceName)
 	fmt.Printf("We have total of %v tickets\n", conferenceTickets)
 	fmt.Println("Get your tickets here to attend")
@@ -78,7 +78,7 @@ func confirmUserPurchase(userFirstName string, userTickets uint, userEmail strin
 	fmt.Printf("There are now %v tickets remaining for %v\n", remainingTickets, conferenceName)
 }
 
-func displayCurrentBookings(bookings []string) {
+func displayCurrentBookings() {
 	fmt.Print("\n\n")
 	fmt.Println("Current bookings:")
 	fmt.Println("-----------------")

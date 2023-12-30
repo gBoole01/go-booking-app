@@ -3,7 +3,11 @@ package main
 import (
 	"booking-app/helper"
 	"fmt"
+	"sync"
+	"time"
 )
+
+var wg = sync.WaitGroup{}
 
 type UserData struct {
 	firstName   string
@@ -42,10 +46,37 @@ func main() {
 
 		if userTickets <= remainingTickets {
 			bookTickets(userTickets, userFirstName, userLastName, userEmail)
+			wg.Add(1)
+			go sendConfirmationEmail(userFirstName, userEmail)
 		}
 
 		displayCurrentBookings()
 	}
+	wg.Wait()
+}
+
+func greetUsers() {
+	fmt.Printf("Welcome to our %v booking application\n", conferenceName)
+	fmt.Printf("We have total of %v tickets\n", conferenceTickets)
+	fmt.Println("Get your tickets here to attend")
+}
+
+func getUserInput() (string, string, string, uint) {
+	var userFirstName string
+	var userLastName string
+	var userEmail string
+	var userTickets uint
+
+	fmt.Println("Please enter your first name: ")
+	fmt.Scanln(&userFirstName)
+	fmt.Println("Please enter your last name: ")
+	fmt.Scanln(&userLastName)
+	fmt.Println("Please enter your email address: ")
+	fmt.Scanln(&userEmail)
+
+	fmt.Print("How many tickets would you like to purchase? ")
+	fmt.Scanln(&userTickets)
+	return userFirstName, userLastName, userEmail, userTickets
 }
 
 func bookTickets(userTickets uint, userFirstName string, userLastName string, userEmail string) {
@@ -61,28 +92,12 @@ func bookTickets(userTickets uint, userFirstName string, userLastName string, us
 	confirmUserPurchase(userFirstName, userTickets, userEmail, remainingTickets, conferenceName)
 }
 
-func greetUsers() {
-	fmt.Printf("Welcome to our %v booking application\n", conferenceName)
-	fmt.Printf("We have total of %v tickets\n", conferenceTickets)
-	fmt.Println("Get your tickets here to attend")
-}
-
-func getUserInput() (string, string, string, uint) {
-	var userFirstName string
-	var userLastName string
-	var userEmail string
-	var userTickets uint
-
-	fmt.Print("Please enter your first name: ")
-	fmt.Scanln(&userFirstName)
-	fmt.Print("Please enter your last name: ")
-	fmt.Scanln(&userLastName)
-	fmt.Print("Please enter your email address: ")
-	fmt.Scanln(&userEmail)
-
-	fmt.Print("How many tickets would you like to purchase? ")
-	fmt.Scanln(&userTickets)
-	return userFirstName, userLastName, userEmail, userTickets
+func sendConfirmationEmail(userFirstName string, userEmail string) {
+	time.Sleep(10 * time.Second) // Simulate Data Processing
+	fmt.Print("\n\n")
+	fmt.Printf("Sending confirmation email to %v at %v\n", userFirstName, userEmail)
+	fmt.Println("-----------------")
+	wg.Done()
 }
 
 func confirmUserPurchase(userFirstName string, userTickets uint, userEmail string, remainingTickets uint, conferenceName string) {

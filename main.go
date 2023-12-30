@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 func main() {
@@ -32,14 +33,23 @@ func main() {
 		fmt.Print("How many tickets would you like to purchase? ")
 		fmt.Scanln(&userTickets)
 
-		if userTickets > remainingTickets {
-			fmt.Printf("Sorry %v, we only have %v tickets remaining\n", userFirstName, remainingTickets)
-		} else {
+		isValid := len(userFirstName) > 0 && len(userLastName) > 0 && strings.Contains(userEmail, "@") && userTickets > 0
+		if !isValid {
+			fmt.Println("Sorry, you have entered invalid details")
+			fmt.Println("Please try again")
+			continue
+		}
+
+		if userTickets <= remainingTickets {
 			remainingTickets -= userTickets
 			bookings = append(bookings, userFirstName+" "+userLastName+" - "+userEmail+" ("+strconv.Itoa(int(userTickets))+" tickets)")
 			fmt.Printf("Thank you %v, you have purchased %v tickets\n", userFirstName, userTickets)
 			fmt.Printf("You will receive an email to %v confirming your purchase\n", userEmail)
 			fmt.Printf("There are now %v tickets remaining for %v\n", remainingTickets, conferenceName)
+		} else {
+			fmt.Printf("Sorry %v, we only have %v tickets remaining\n", userFirstName, remainingTickets)
+			fmt.Printf("Please try again\n")
+			continue
 		}
 
 		fmt.Print("\n\n")
